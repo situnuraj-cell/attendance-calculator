@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Attendance</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+        .percentage {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .percentage.excellent { color: #28a745; }
+        .percentage.good { color: #17a2b8; }
+        .percentage.warning { color: #ffc107; }
+        .percentage.critical { color: #dc3545; }
+        .progress-bar {
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 25px 0;
+        }
+        .stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #495057;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .info-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            color: white;
+        }
+        .info-box.needed {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+        }
+        .info-box.bunk {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        .info-box.gray {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        .info-box h4 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .info-box .big {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .error {
+            background: #dc3545;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        {% if error %}
+        <div class="error">
+            <h2>Error</h2>
+            <p>{{error}}</p>
+        </div>
+        {% else %}
+        <h1>My Attendance</h1>
+        
+        <div class="percentage {{result.css_class}}">{{result.percentage}}%</div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{result.percentage}}%; background: {{result.color}};">
+                {{result.percentage}}%
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">{{result.total}}</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #28a745;">{{result.attended}}</div>
+                <div class="stat-label">Attended</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #dc3545;">{{result.absent}}</div>
+                <div class="stat-label">Absent</div>
+            </div>
+        </div>
+        
+        {% if result.classes_needed > 0 %}
+        <div class="info-box needed">
+            <h4>Need to Attend</h4>
+            <div class="big">{{result.classes_needed}}</div>
+            <small>more classes for 80%</small>
+        </div>
+        {% else %}
+        <div class="info-box success">
+            <h4>Target Achieved!</h4>
+            <small>80%+ attendance maintained</small>
+        </div>
+        {% endif %}
+        
+        {% if result.bunk_allowed > 0 %}
+        <div class="info-box bunk">
+            <h4>You Can Bunk</h4>
+            <div class="big">{{result.bunk_allowed}}</div>
+            <small>classes & still have 80%</small>
+        </div>
+        {% elif result.percentage >= 80 %}
+        <div class="info-box gray">
+            <h4>Bunk Limit Reached</h4>
+            <small>Cannot miss more classes</small>
+        </div>
+        {% else %}
+        <div class="info-box gray">
+            <h4>Cannot Bunk</h4>
+            <small>Reach 80% first</small>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
